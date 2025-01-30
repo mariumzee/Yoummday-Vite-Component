@@ -36,6 +36,10 @@ export class MyDropdown extends LitElement {
       { label: "Made", value: "2" },
       { label: "My", value: "3" },
       { label: "Day!", value: "4" },
+      { label: "Day 1", value: "5" },
+      { label: "Day 2", value: "6" },
+      { label: "Day 3", value: "7" },
+      { label: "Day 4", value: "8" },
     ];
   }
 

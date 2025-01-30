@@ -31,19 +31,22 @@
     z-index: 1000;
     opacity: 0;
     transform: translateY(-20px);
-    transition: opacity 0.3s ease, transform 0.3s ease; // to animate while closing
+    transition: opacity 0.3s ease, transform 0.3s ease;
     display: none;
-  
+
+    max-height: 200px;  
+    overflow-y: auto;   
+
     &.show {
       display: block;
       opacity: 1;
       transform: translateY(0px);
     }
-  
+
     &.align-right {
       right: 0px;
     }
-  
+
     &.align-left {
       left: 0px;
     }
