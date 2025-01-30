@@ -6,17 +6,17 @@ import prettierConfig from "eslint-config-prettier";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { files: ["**/*.{js,mjs,cjs,ts,tsx}"] }, // Ensure TSX is also included if using React
-  { languageOptions: { globals: globals.browser } }, // Since your code runs in the browser
+  { files: ["**/*.{js,mjs,cjs,ts,tsx}"] },
+  { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
     plugins: {
-      prettier, // Add Prettier as a plugin
+      prettier,
     },
     rules: {
-      "prettier/prettier": "error", // Enforce Prettier formatting as ESLint errors
+      "prettier/prettier": "error",
     },
   },
-  prettierConfig, // Ensure Prettier formatting rules take precedence
+  prettierConfig,
 ];
