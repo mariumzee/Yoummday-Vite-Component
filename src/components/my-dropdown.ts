@@ -2,56 +2,120 @@ import { LitElement, html, unsafeCSS } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import styles from "./my-dropdown.scss?inline";
 
+interface DropdownItem {
+  label: string;
+  value: string;
+}
+
 @customElement("my-dropdown")
 export class MyDropdown extends LitElement {
   static styles = unsafeCSS(styles);
 
-  @property({ type: Array })
-  items: string[] = [];
+  @property({ attribute: "button-text" })
+  accessor buttonText = "Dropdown";
 
-  @property({ type: String })
-  label = "Select an option";
+  @property({ attribute: false })
+  accessor items: DropdownItem[] = [];
+
+  @property({ attribute: "alignment" })
+  accessor alignment: "left" | "right" = "right";
+
+  @property({ attribute: "active-item" })
+  accessor activeItem = "";
 
   @state()
-  private isOpen = false;
+  private accessor isOpen = false;
 
-  @state()
-  private selectedItem: string | null = null;
-
-  private toggleDropdown() {
-    this.isOpen = !this.isOpen;
+  constructor() {
+    super();
+    this.initializeItems();
+  }
+  initializeItems() {
+    this.items = [
+      { label: "You", value: "1" },
+      { label: "Made", value: "2" },
+      { label: "My", value: "3" },
+      { label: "Day!", value: "4" },
+    ];
   }
 
-  private selectItem(item: string) {
-    this.selectedItem = item;
-    this.isOpen = false;
+  private handleClickOutside = (e: MouseEvent) => {
+    const path = e.composedPath();
+    if (!path.includes(this)) {
+      this.isOpen = false;
+      this.requestUpdate();
+    }
+  };
+
+  connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener("click", this.handleClickOutside);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener("click", this.handleClickOutside);
+  }
+
+  private toggleDropdown(e: Event): void {
+    e.stopPropagation();
+    this.isOpen = !this.isOpen;
+    this.requestUpdate();
+
+    requestAnimationFrame(() => {
+      const dropdownMenu = this.shadowRoot!.querySelector(
+        ".dropdown-menu"
+      ) as HTMLElement;
+      if (dropdownMenu) {
+        if (this.isOpen) {
+          dropdownMenu.style.display = "block";
+          requestAnimationFrame(() => {
+            dropdownMenu.classList.add("show");
+          });
+        } else {
+          dropdownMenu.classList.remove("show");
+          setTimeout(() => {
+            dropdownMenu.style.display = "none";
+          }, 300);
+        }
+      }
+    });
+  }
+
+  private handleItemClick(value: string) {
+    this.activeItem = value;
     this.dispatchEvent(
-      new CustomEvent("selection-changed", {
-        detail: { selectedItem: item },
+      new CustomEvent("item-selected", {
+        detail: { value },
         bubbles: true,
         composed: true,
       })
     );
+    this.isOpen = true;
   }
 
   render() {
     return html`
-      <div class="dropdown">
-        <button class="dropdown-button" @click="${this.toggleDropdown}">
-          ${this.selectedItem || this.label}
-        </button>
-        <div class="dropdown-content ${this.isOpen ? "show" : ""}">
-          ${this.items.map(
-            (item) => html`
-              <div
-                class="dropdown-item"
-                @click="${() => this.selectItem(item)}"
-              >
-                ${item}
-              </div>
-            `
-          )}
-        </div>
+      <button class="dropdown-button" @click=${this.toggleDropdown}>
+        ${this.buttonText}
+      </button>
+
+      <div
+        class="dropdown-menu ${this.isOpen ? "show" : ""} align-${this
+          .alignment}"
+      >
+        ${this.items.map(
+          (item, index) => html`
+            <div
+              class="dropdown-item ${item.value === this.activeItem
+                ? "active"
+                : ""}"
+              @click=${() => this.handleItemClick(item.value)}
+            >
+              ${index + 1}) ${item.label}
+            </div>
+          `
+        )}
       </div>
     `;
   }
