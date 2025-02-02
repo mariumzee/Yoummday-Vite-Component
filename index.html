@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,22 +7,9 @@
     <title>Yoummday components</title>
     <link rel="stylesheet" href="./src/index.css" />
     <script type="module" src="/src/components/my-dropdown.ts"></script>
-    <style>
-      body,
-      html {
-        height: 100%;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    </style>
   </head>
   <body>
-    <my-dropdown
-      button-text="Hello! Click me to select an item"
-      alignment="left"
-    >
+    <my-dropdown button-text="Select an item" dropdownAlignment="left">
     </my-dropdown>
   </body>
 </html>
